@@ -93,7 +93,16 @@ $('childName').value=data.childName;
 function updateSim(el,s,t){let g=Number(el.querySelector('.sim-grade').value),type=el.querySelector('.sim-type').value,before=termAvg(s,t),after=simulate(s,t,type,g,1),txt=before===null?'Mit dieser ersten Note: <b>'+fmt(after)+'</b>':'Aktuell: <b>'+fmt(before)+'</b> → Danach: <b>'+fmt(after)+'</b> ('+(after<before-0.00001?'verbessert 🌟':after>before+0.00001?'verändert sich nach oben':'unverändert')+')';el.querySelector('.simresult').innerHTML=txt;}
 function openDlg(name){let d=$(name);if(d.showModal)d.showModal();else d.setAttribute('open','');}
 function closeDlg(name){let d=$(name);if(d.close)d.close();else d.removeAttribute('open');}
-function page(name){['home','grades','year','stats','settings'].forEach(n=>{$('page-'+n).classList.toggle('hidden',n!==name);document.querySelector('[data-page="'+n+'"]').classList.toggle('active',n===name);});render();}
+function page(name){
+ const pages=['home','plan','tasks','grades','year','stats','settings'];
+ if(!pages.includes(name))name='home';
+ pages.forEach(n=>{const section=$('page-'+n);if(section)section.classList.toggle('hidden',n!==name);});
+ const mainName=['grades','year','stats'].includes(name)?'grades':name;
+ document.querySelectorAll('.nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===mainName));
+ const gradeNav=$('np4-grade-nav');if(gradeNav)gradeNav.style.display=mainName==='grades'?'flex':'none';
+ document.querySelectorAll('[data-np4-grade]').forEach(b=>b.classList.toggle('active',b.dataset.np4Grade===name));
+ render();
+}
 document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeDlg(b.dataset.close)));
 $('term').addEventListener('change',render);
